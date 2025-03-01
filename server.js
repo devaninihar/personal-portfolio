@@ -5,22 +5,20 @@ const nodemailer = require("nodemailer");
 const path = require("path");
 require("dotenv").config(); // Load environment variables
 
-// Server setup
 const app = express();
+const PORT = process.env.PORT || 3001;
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 app.use("/", router);
 
-const PORT = process.env.PORT || 3001;
-
-app.listen(PORT, () => console.log(`Server Running on port ${PORT}`));
-
-// Configure nodemailer
+// Nodemailer setup
 const contactEmail = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER, // Gmail address
-    pass: process.env.EMAIL_PASS, // App password
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
@@ -41,7 +39,7 @@ router.post("/contact", async (req, res) => {
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: process.env.EMAIL_USER, // Receiver email
+      to: process.env.EMAIL_USER,
       subject: "New Contact Form Submission",
       html: `
         <h2>Contact Form Submission</h2>
@@ -52,7 +50,6 @@ router.post("/contact", async (req, res) => {
       `,
     };
 
-    // Send email
     await contactEmail.sendMail(mailOptions);
     res.status(200).json({ code: 200, status: "Message Sent Successfully" });
   } catch (error) {
@@ -61,9 +58,18 @@ router.post("/contact", async (req, res) => {
   }
 });
 
-// ✅ Serve static frontend files
-app.use(express.static(path.join(__dirname, "build")));
+// Serve frontend build files
+const buildPath = path.join(__dirname, "build");
+app.use(express.static(buildPath));
 
+// Handle React routes correctly
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "build", "index.html"));
+  res.sendFile(path.join(buildPath, "index.html"), (err) => {
+    if (err) {
+      res.status(500).send(err);
+    }
+  });
 });
+
+// Start server
+app.listen(PORT, () => console.log(`✅ Server Running on port ${PORT}`));
