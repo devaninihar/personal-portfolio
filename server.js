@@ -61,7 +61,7 @@ router.post("/contact", async (req, res) => {
   }
 });
 
-// ✅ Serve static frontend files (updated path)
+// ✅ Serve static frontend files
 app.use(express.static(path.join(__dirname, "build")));
 
 app.get("*", (req, res) => {

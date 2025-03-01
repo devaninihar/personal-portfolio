@@ -29,10 +29,14 @@
   },
   "scripts": {
     "start": "node server.js",
-    "server": "nodemon server.js",
-    "client": "npm start --prefix client",
-    "install-client": "npm install --prefix client",
-    "build": "npm install --prefix client && npm run build --prefix client"
+    "build": "react-scripts build",
+    "install-client": "cd src && npm install",
+    "install-server": "npm install",
+    "heroku-postbuild": "npm run build"
+  },
+  "engines": {
+    "node": "18.x",
+    "npm": "9.x"
   },
   "eslintConfig": {
     "extends": [
