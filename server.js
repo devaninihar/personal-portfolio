@@ -6,28 +6,36 @@ const path = require("path");
 require("dotenv").config(); // Load environment variables
 
 const app = express();
-const PORT = process.env.PORT || 3001;
-
-// Middleware
 app.use(cors());
 app.use(express.json());
 app.use("/", router);
 
-// Nodemailer setup
+const PORT = process.env.PORT || 3001;
+
+app.listen(PORT, () => console.log(`✅ Server Running on port ${PORT}`));
+
+// Serve static frontend files correctly
+app.use(express.static(path.join(__dirname, "build")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "build", "index.html"));
+});
+
+// ------------------- EMAIL CONFIGURATION -------------------
 const contactEmail = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: process.env.EMAIL_USER, // Gmail address
+    pass: process.env.EMAIL_PASS, // App password
   },
 });
 
 // Verify email configuration
 contactEmail.verify((error) => {
   if (error) {
-    console.log("Error with email configuration:", error);
+    console.log("❌ Error with email configuration:", error);
   } else {
-    console.log("Ready to Send Emails");
+    console.log("✅ Ready to Send Emails");
   }
 });
 
@@ -39,7 +47,7 @@ router.post("/contact", async (req, res) => {
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: process.env.EMAIL_USER,
+      to: process.env.EMAIL_USER, // Receiver email
       subject: "New Contact Form Submission",
       html: `
         <h2>Contact Form Submission</h2>
@@ -50,26 +58,12 @@ router.post("/contact", async (req, res) => {
       `,
     };
 
+    // Send email
     await contactEmail.sendMail(mailOptions);
     res.status(200).json({ code: 200, status: "Message Sent Successfully" });
   } catch (error) {
-    console.error("Error sending email:", error);
+    console.error("❌ Error sending email:", error);
     res.status(500).json({ code: 500, status: "Error sending message", error });
   }
 });
 
-// Serve frontend build files
-const buildPath = path.join(__dirname, "build");
-app.use(express.static(buildPath));
-
-// Handle React routes correctly
-app.get("*", (req, res) => {
-  res.sendFile(path.join(buildPath, "index.html"), (err) => {
-    if (err) {
-      res.status(500).send(err);
-    }
-  });
-});
-
-// Start server
-app.listen(PORT, () => console.log(`✅ Server Running on port ${PORT}`));
