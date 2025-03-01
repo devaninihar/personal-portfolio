@@ -2,15 +2,18 @@ const express = require("express");
 const router = express.Router();
 const cors = require("cors");
 const nodemailer = require("nodemailer");
+const path = require("path");
 require("dotenv").config(); // Load environment variables
 
 // Server setup
 const app = express();
-app.use(cors({ origin: "http://localhost:3000" })); // Allow all origins
+app.use(cors());
 app.use(express.json());
 app.use("/", router);
 
-app.listen(3001, () => console.log("Server Running on port 3001 "));
+const PORT = process.env.PORT || 3001;
+
+app.listen(PORT, () => console.log(`Server Running on port ${PORT}`));
 
 // Configure nodemailer
 const contactEmail = nodemailer.createTransport({
@@ -57,13 +60,10 @@ router.post("/contact", async (req, res) => {
     res.status(500).json({ code: 500, status: "Error sending message", error });
   }
 });
-const path = require("path");
 
-
-
-// Serve static frontend files
-app.use(express.static(path.join(__dirname, "client/build")));
+// ✅ Serve static frontend files (updated path)
+app.use(express.static(path.join(__dirname, "build")));
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "client/build", "index.html"));
+  res.sendFile(path.join(__dirname, "build", "index.html"));
 });
