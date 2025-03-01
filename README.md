@@ -1,3 +1,11 @@
+- 👋 Hi, I’m @devaninihar
+- 👀 I’m interested in tech
+- 🌱 I’m currently learning MERN stack
+- 💞️ I’m looking to collaborate on projects
+- 📫 How to reach me mail me as in devaninihar@gmail.com
+- 😄 Pronouns: ...
+- ⚡ Fun fact: i love coding
+
 # Personal Portfolio Website in React
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

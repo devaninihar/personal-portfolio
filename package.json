@@ -28,14 +28,11 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "start": "node server.js",
     "server": "nodemon server.js",
-    "client": "react-scripts start",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "client": "npm start --prefix client",
+    "install-client": "npm install --prefix client",
+    "build": "npm install --prefix client && npm run build --prefix client"
   },
   "eslintConfig": {
     "extends": [
