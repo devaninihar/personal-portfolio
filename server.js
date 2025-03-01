@@ -57,3 +57,13 @@ router.post("/contact", async (req, res) => {
     res.status(500).json({ code: 500, status: "Error sending message", error });
   }
 });
+const path = require("path");
+
+
+
+// Serve static frontend files
+app.use(express.static(path.join(__dirname, "client/build")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client/build", "index.html"));
+});
